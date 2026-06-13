@@ -12,10 +12,10 @@ Kavach SOS is a comprehensive, real-time disaster management and response platfo
 ## 🏗️ Technology Stack
 
 * **Frontend**: React, Vite, Tailwind CSS, Radix UI (accessible components)
-* **Backend**: Node.js, Express, TypeScript
+* **Backend**: Python, Node.js, Express, TypeScript
 * **Database**: SQLite (via Drizzle ORM) for lightweight, instantaneous local data persistence
 * **API Layer**: Zod for validation, React Query & Orval for strictly-typed API communication
-* **Algorithms Demo**: Python
+
 
 ---
 
@@ -39,24 +39,9 @@ The application relies on a fully self-contained local SQLite database.
 
 ---
 
-## 🐍 Running the Core Algorithms Demo (Python)
-
-For academic and architectural demonstration purposes, the core routing and allocation algorithms have been implemented in a modular Python package.
-
-To view the simulated algorithm outputs in your terminal:
-
-```bash
-# Navigate to the python directory
-cd python_core
-
-# Run the master demonstration script
-python app.py
-```
 
 ### Algorithm Modules:
 * `dijkstra_routing.py`: Calculates shortest/safest paths in a weighted graph.
 * `bfs_shelter.py`: Searches a 2D matrix for the nearest evacuation shelter.
 * `greedy_allocation.py`: Distributes limited emergency resources prioritizing high-severity incidents.
 
----
-*Developed for academic/faculty presentation.*
