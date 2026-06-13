@@ -1,0 +1,1158 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Smart Disaster Response and Resource Allocation Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: incidents
+    description: Disaster incident management
+  - name: resources
+    description: Resource inventory and allocation
+  - name: shelters
+    description: Shelter management
+  - name: rescue-teams
+    description: Rescue team management
+  - name: routes
+    description: Rescue route planning
+  - name: analytics
+    description: Analytics and statistics
+  - name: ai
+    description: AI analysis and predictions
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ── Incidents ──────────────────────────────────────────────────────────────
+  /incidents:
+    get:
+      operationId: listIncidents
+      tags: [incidents]
+      summary: List all incidents
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, resolved, monitoring, critical]
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [flood, earthquake, cyclone, fire, landslide]
+      responses:
+        "200":
+          description: List of incidents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Incident"
+    post:
+      operationId: createIncident
+      tags: [incidents]
+      summary: Create a new disaster incident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+
+  /incidents/{id}:
+    get:
+      operationId: getIncident
+      tags: [incidents]
+      summary: Get incident by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Incident details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateIncident
+      tags: [incidents]
+      summary: Update incident
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentUpdate"
+      responses:
+        "200":
+          description: Updated incident
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+    delete:
+      operationId: deleteIncident
+      tags: [incidents]
+      summary: Delete incident
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /incidents/stats/summary:
+    get:
+      operationId: getIncidentSummary
+      tags: [incidents]
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Dashboard summary statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncidentSummary"
+
+  /incidents/stats/trends:
+    get:
+      operationId: getIncidentTrends
+      tags: [incidents]
+      summary: Get incident trends by day
+      responses:
+        "200":
+          description: Trend data points
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrendPoint"
+
+  /incidents/stats/by-category:
+    get:
+      operationId: getIncidentsByCategory
+      tags: [incidents]
+      summary: Count incidents grouped by category
+      responses:
+        "200":
+          description: Category breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoryCount"
+
+  # ── Resources ──────────────────────────────────────────────────────────────
+  /resources:
+    get:
+      operationId: listResources
+      tags: [resources]
+      summary: List all resources
+      responses:
+        "200":
+          description: Resource list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Resource"
+    post:
+      operationId: createResource
+      tags: [resources]
+      summary: Add resource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceInput"
+      responses:
+        "201":
+          description: Created resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+
+  /resources/{id}:
+    patch:
+      operationId: updateResource
+      tags: [resources]
+      summary: Update resource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+
+  /resources/allocate:
+    post:
+      operationId: allocateResources
+      tags: [resources]
+      summary: Run greedy resource allocation for an incident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AllocationRequest"
+      responses:
+        "200":
+          description: Allocation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AllocationResult"
+
+  /resources/stats/utilization:
+    get:
+      operationId: getResourceUtilization
+      tags: [resources]
+      summary: Get resource utilization stats per category
+      responses:
+        "200":
+          description: Utilization data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ResourceUtilization"
+
+  # ── Shelters ───────────────────────────────────────────────────────────────
+  /shelters:
+    get:
+      operationId: listShelters
+      tags: [shelters]
+      summary: List all shelters
+      responses:
+        "200":
+          description: Shelter list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Shelter"
+    post:
+      operationId: createShelter
+      tags: [shelters]
+      summary: Add a shelter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShelterInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shelter"
+
+  /shelters/{id}:
+    patch:
+      operationId: updateShelter
+      tags: [shelters]
+      summary: Update shelter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShelterUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shelter"
+    delete:
+      operationId: deleteShelter
+      tags: [shelters]
+      summary: Delete shelter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /shelters/recommend:
+    post:
+      operationId: recommendShelters
+      tags: [shelters]
+      summary: BFS-based shelter recommendation for incident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShelterRecommendRequest"
+      responses:
+        "200":
+          description: Recommended shelters ordered by proximity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShelterRecommendation"
+
+  # ── Rescue Teams ───────────────────────────────────────────────────────────
+  /rescue-teams:
+    get:
+      operationId: listRescueTeams
+      tags: [rescue-teams]
+      summary: List rescue teams
+      responses:
+        "200":
+          description: Team list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RescueTeam"
+    post:
+      operationId: createRescueTeam
+      tags: [rescue-teams]
+      summary: Register a rescue team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RescueTeamInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RescueTeam"
+
+  /rescue-teams/{id}:
+    patch:
+      operationId: updateRescueTeam
+      tags: [rescue-teams]
+      summary: Update rescue team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RescueTeamUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RescueTeam"
+
+  # ── Routes ─────────────────────────────────────────────────────────────────
+  /routes/plan:
+    post:
+      operationId: planRescueRoute
+      tags: [routes]
+      summary: Dijkstra shortest rescue route from team to incident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoutePlanRequest"
+      responses:
+        "200":
+          description: Planned route
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoutePlanResult"
+
+  /routes:
+    get:
+      operationId: listRoutes
+      tags: [routes]
+      summary: List all saved rescue routes
+      responses:
+        "200":
+          description: Route list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RescueRoute"
+
+  # ── AI Analysis ────────────────────────────────────────────────────────────
+  /ai/analyze-image:
+    post:
+      operationId: analyzeDisasterImage
+      tags: [ai]
+      summary: Analyze disaster image with AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageAnalysisRequest"
+      responses:
+        "200":
+          description: AI analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageAnalysisResult"
+
+  /ai/recommend-action:
+    post:
+      operationId: getAiActionPlan
+      tags: [ai]
+      summary: AI-generated action plan for an incident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActionPlanRequest"
+      responses:
+        "200":
+          description: AI action plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActionPlan"
+
+  /ai/predictions:
+    get:
+      operationId: listAiPredictions
+      tags: [ai]
+      summary: List recent AI predictions
+      responses:
+        "200":
+          description: AI prediction logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AiPrediction"
+
+  # ── Analytics ──────────────────────────────────────────────────────────────
+  /analytics/region-impact:
+    get:
+      operationId: getRegionImpact
+      tags: [analytics]
+      summary: Population impact by region
+      responses:
+        "200":
+          description: Region impact data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RegionImpact"
+
+  /analytics/rescue-efficiency:
+    get:
+      operationId: getRescueEfficiency
+      tags: [analytics]
+      summary: Rescue operation efficiency metrics
+      responses:
+        "200":
+          description: Efficiency metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RescueEfficiency"
+
+  /analytics/live-ticker:
+    get:
+      operationId: getLiveTicker
+      tags: [analytics]
+      summary: Recent emergency ticker events
+      responses:
+        "200":
+          description: Ticker events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TickerEvent"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    # ── Incident ──────────────────────────────────────────────────────────────
+    Incident:
+      type: object
+      required: [id, title, category, severity, status, latitude, longitude, affectedPopulation, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        category:
+          type: string
+          enum: [flood, earthquake, cyclone, fire, landslide]
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 10
+        status:
+          type: string
+          enum: [active, resolved, monitoring, critical]
+        latitude:
+          type: number
+        longitude:
+          type: number
+        affectedPopulation:
+          type: integer
+        imageUrl:
+          type: ["string", "null"]
+        region:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: ["string", "null"]
+
+    IncidentInput:
+      type: object
+      required: [title, category, severity, latitude, longitude, affectedPopulation]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [flood, earthquake, cyclone, fire, landslide]
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 10
+        latitude:
+          type: number
+        longitude:
+          type: number
+        affectedPopulation:
+          type: integer
+        imageUrl:
+          type: string
+        region:
+          type: string
+        status:
+          type: string
+          enum: [active, resolved, monitoring, critical]
+
+    IncidentUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 10
+        status:
+          type: string
+          enum: [active, resolved, monitoring, critical]
+        affectedPopulation:
+          type: integer
+        imageUrl:
+          type: string
+
+    IncidentSummary:
+      type: object
+      required: [totalIncidents, activeRescueOps, populationAffected, shelterOccupancy, resourceUtilizationPct, criticalIncidents]
+      properties:
+        totalIncidents:
+          type: integer
+        activeRescueOps:
+          type: integer
+        populationAffected:
+          type: integer
+        shelterOccupancy:
+          type: number
+        resourceUtilizationPct:
+          type: number
+        criticalIncidents:
+          type: integer
+
+    TrendPoint:
+      type: object
+      required: [date, count, severity]
+      properties:
+        date:
+          type: string
+        count:
+          type: integer
+        severity:
+          type: number
+
+    CategoryCount:
+      type: object
+      required: [category, count, populationAffected]
+      properties:
+        category:
+          type: string
+        count:
+          type: integer
+        populationAffected:
+          type: integer
+
+    # ── Resource ──────────────────────────────────────────────────────────────
+    Resource:
+      type: object
+      required: [id, name, category, totalQuantity, availableQuantity, unit, location]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+          enum: [food, water, medical, rescue_team, boat, ambulance]
+        totalQuantity:
+          type: integer
+        availableQuantity:
+          type: integer
+        unit:
+          type: string
+        location:
+          type: string
+        latitude:
+          type: ["number", "null"]
+        longitude:
+          type: ["number", "null"]
+
+    ResourceInput:
+      type: object
+      required: [name, category, totalQuantity, availableQuantity, unit, location]
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+          enum: [food, water, medical, rescue_team, boat, ambulance]
+        totalQuantity:
+          type: integer
+        availableQuantity:
+          type: integer
+        unit:
+          type: string
+        location:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+    ResourceUpdate:
+      type: object
+      properties:
+        availableQuantity:
+          type: integer
+        totalQuantity:
+          type: integer
+        location:
+          type: string
+
+    AllocationRequest:
+      type: object
+      required: [incidentId, severity, affectedPopulation]
+      properties:
+        incidentId:
+          type: integer
+        severity:
+          type: integer
+        affectedPopulation:
+          type: integer
+
+    AllocationResult:
+      type: object
+      required: [incidentId, allocations, efficiencyScore, shortages]
+      properties:
+        incidentId:
+          type: integer
+        allocations:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResourceAllocation"
+        efficiencyScore:
+          type: number
+        shortages:
+          type: array
+          items:
+            type: string
+
+    ResourceAllocation:
+      type: object
+      required: [resourceId, resourceName, category, allocated, unit]
+      properties:
+        resourceId:
+          type: integer
+        resourceName:
+          type: string
+        category:
+          type: string
+        allocated:
+          type: integer
+        unit:
+          type: string
+
+    ResourceUtilization:
+      type: object
+      required: [category, total, used, available, utilizationPct]
+      properties:
+        category:
+          type: string
+        total:
+          type: integer
+        used:
+          type: integer
+        available:
+          type: integer
+        utilizationPct:
+          type: number
+
+    # ── Shelter ───────────────────────────────────────────────────────────────
+    Shelter:
+      type: object
+      required: [id, name, latitude, longitude, capacity, currentOccupancy, status]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        capacity:
+          type: integer
+        currentOccupancy:
+          type: integer
+        status:
+          type: string
+          enum: [available, full, closed]
+        address:
+          type: ["string", "null"]
+        facilities:
+          type: array
+          items:
+            type: string
+
+    ShelterInput:
+      type: object
+      required: [name, latitude, longitude, capacity]
+      properties:
+        name:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        capacity:
+          type: integer
+        currentOccupancy:
+          type: integer
+        address:
+          type: string
+        facilities:
+          type: array
+          items:
+            type: string
+
+    ShelterUpdate:
+      type: object
+      properties:
+        currentOccupancy:
+          type: integer
+        status:
+          type: string
+          enum: [available, full, closed]
+        capacity:
+          type: integer
+
+    ShelterRecommendRequest:
+      type: object
+      required: [incidentId, latitude, longitude, requiredCapacity]
+      properties:
+        incidentId:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        requiredCapacity:
+          type: integer
+
+    ShelterRecommendation:
+      type: object
+      required: [shelter, distanceKm, estimatedTravelMinutes, availableCapacity, score]
+      properties:
+        shelter:
+          $ref: "#/components/schemas/Shelter"
+        distanceKm:
+          type: number
+        estimatedTravelMinutes:
+          type: integer
+        availableCapacity:
+          type: integer
+        score:
+          type: number
+
+    # ── Rescue Team ───────────────────────────────────────────────────────────
+    RescueTeam:
+      type: object
+      required: [id, name, type, size, status, latitude, longitude]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [medical, firefighting, flood_rescue, search_rescue, logistics]
+        size:
+          type: integer
+        status:
+          type: string
+          enum: [available, deployed, resting, standby]
+        latitude:
+          type: number
+        longitude:
+          type: number
+        assignedIncidentId:
+          type: ["integer", "null"]
+        equipment:
+          type: array
+          items:
+            type: string
+
+    RescueTeamInput:
+      type: object
+      required: [name, type, size, latitude, longitude]
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [medical, firefighting, flood_rescue, search_rescue, logistics]
+        size:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        equipment:
+          type: array
+          items:
+            type: string
+
+    RescueTeamUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [available, deployed, resting, standby]
+        assignedIncidentId:
+          type: ["integer", "null"]
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+    # ── Routes ────────────────────────────────────────────────────────────────
+    RoutePlanRequest:
+      type: object
+      required: [teamId, incidentId]
+      properties:
+        teamId:
+          type: integer
+        incidentId:
+          type: integer
+
+    RoutePlanResult:
+      type: object
+      required: [waypoints, totalDistanceKm, estimatedMinutes, safetyScore]
+      properties:
+        waypoints:
+          type: array
+          items:
+            $ref: "#/components/schemas/Waypoint"
+        totalDistanceKm:
+          type: number
+        estimatedMinutes:
+          type: integer
+        safetyScore:
+          type: number
+        routeId:
+          type: ["integer", "null"]
+
+    Waypoint:
+      type: object
+      required: [latitude, longitude, label]
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+        label:
+          type: string
+        order:
+          type: integer
+
+    RescueRoute:
+      type: object
+      required: [id, teamId, incidentId, totalDistanceKm, estimatedMinutes, status, createdAt]
+      properties:
+        id:
+          type: integer
+        teamId:
+          type: integer
+        incidentId:
+          type: integer
+        totalDistanceKm:
+          type: number
+        estimatedMinutes:
+          type: integer
+        status:
+          type: string
+          enum: [planned, active, completed]
+        safetyScore:
+          type: number
+        createdAt:
+          type: string
+
+    # ── AI ────────────────────────────────────────────────────────────────────
+    ImageAnalysisRequest:
+      type: object
+      required: [imageUrl]
+      properties:
+        imageUrl:
+          type: string
+        incidentId:
+          type: ["integer", "null"]
+
+    ImageAnalysisResult:
+      type: object
+      required: [detectedCategory, severity, confidenceScore, damageLevel, estimatedCasualties, suggestedPriority, requiredResources, analysisNotes]
+      properties:
+        detectedCategory:
+          type: string
+          enum: [flood, earthquake, cyclone, fire, landslide, unknown]
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 10
+        confidenceScore:
+          type: number
+        damageLevel:
+          type: string
+          enum: [minimal, moderate, severe, catastrophic]
+        estimatedCasualties:
+          type: integer
+        suggestedPriority:
+          type: string
+          enum: [low, medium, high, critical]
+        requiredResources:
+          type: array
+          items:
+            type: string
+        analysisNotes:
+          type: string
+
+    ActionPlanRequest:
+      type: object
+      required: [incidentId, severity, affectedPopulation, category]
+      properties:
+        incidentId:
+          type: integer
+        severity:
+          type: integer
+        affectedPopulation:
+          type: integer
+        category:
+          type: string
+        weatherCondition:
+          type: string
+
+    ActionPlan:
+      type: object
+      required: [incidentId, requiredTeams, shelterCapacityNeeded, evacuationUrgency, resourcePlan, estimatedResponseHours, aiNotes]
+      properties:
+        incidentId:
+          type: integer
+        requiredTeams:
+          type: integer
+        shelterCapacityNeeded:
+          type: integer
+        evacuationUrgency:
+          type: string
+          enum: [low, moderate, high, immediate]
+        resourcePlan:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResourceAllocation"
+        estimatedResponseHours:
+          type: number
+        aiNotes:
+          type: string
+
+    AiPrediction:
+      type: object
+      required: [id, incidentId, type, result, confidenceScore, createdAt]
+      properties:
+        id:
+          type: integer
+        incidentId:
+          type: integer
+        type:
+          type: string
+          enum: [image_analysis, action_plan, severity_prediction]
+        result:
+          type: string
+        confidenceScore:
+          type: number
+        createdAt:
+          type: string
+
+    # ── Analytics ─────────────────────────────────────────────────────────────
+    RegionImpact:
+      type: object
+      required: [region, incidentCount, totalAffected, avgSeverity, latitude, longitude]
+      properties:
+        region:
+          type: string
+        incidentCount:
+          type: integer
+        totalAffected:
+          type: integer
+        avgSeverity:
+          type: number
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+    RescueEfficiency:
+      type: object
+      required: [avgResponseMinutes, teamsDeployed, incidentsResolved, successRate, avgCoverageKm]
+      properties:
+        avgResponseMinutes:
+          type: number
+        teamsDeployed:
+          type: integer
+        incidentsResolved:
+          type: integer
+        successRate:
+          type: number
+        avgCoverageKm:
+          type: number
+
+    TickerEvent:
+      type: object
+      required: [id, message, category, severity, timestamp, region]
+      properties:
+        id:
+          type: integer
+        message:
+          type: string
+        category:
+          type: string
+        severity:
+          type: integer
+        timestamp:
+          type: string
+        region:
+          type: string

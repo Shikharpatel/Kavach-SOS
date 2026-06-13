@@ -1,0 +1,24 @@
+import { z } from "zod";
+
+export const AnalyzeDisasterImageBody = z.any();
+export const GetAiActionPlanBody = z.any();
+export const HealthCheckResponse = z.any();
+export const ListIncidentsQueryParams = z.any();
+export const CreateIncidentBody = z.any();
+export const UpdateIncidentBody = z.any();
+export const UpdateIncidentParams = z.any();
+export const DeleteIncidentParams = z.any();
+export const GetIncidentParams = z.any();
+export const CreateRescueTeamBody = z.any();
+export const UpdateRescueTeamParams = z.any();
+export const UpdateRescueTeamBody = z.any();
+export const CreateResourceBody = z.any();
+export const UpdateResourceParams = z.any();
+export const UpdateResourceBody = z.any();
+export const AllocateResourcesBody = z.any();
+export const PlanRescueRouteBody = z.any();
+export const CreateShelterBody = z.any();
+export const UpdateShelterParams = z.any();
+export const UpdateShelterBody = z.any();
+export const DeleteShelterParams = z.any();
+export const RecommendSheltersBody = z.any();

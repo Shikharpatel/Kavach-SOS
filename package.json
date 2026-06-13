@@ -1,0 +1,15 @@
+{
+  "name": "kavach-sos-monorepo",
+  "private": true,
+  "workspaces": [
+    "artifacts/*",
+    "lib/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w api-server\" \"npm run dev -w disaster-dashboard\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3",
+    "typescript": "^5.4.5"
+  }
+}

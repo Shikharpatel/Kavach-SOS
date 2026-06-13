@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.env
+.DS_Store
+*.db
+*.log
+artifacts/api-server/node_modules/
+artifacts/disaster-dashboard/node_modules/
+lib/db/node_modules/
+lib/api-spec/node_modules/
+lib/db/drizzle/
