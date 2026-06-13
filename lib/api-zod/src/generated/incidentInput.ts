@@ -9,11 +9,20 @@ import type { IncidentInputCategory } from './incidentInputCategory';
 import type { IncidentInputStatus } from './incidentInputStatus';
 
 export interface IncidentInput {
+  /** @minimum 0 */
   affectedPopulation: number;
   category: IncidentInputCategory;
   description?: string;
   imageUrl?: string;
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude: number;
   region?: string;
   /**

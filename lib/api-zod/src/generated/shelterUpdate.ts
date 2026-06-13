@@ -8,6 +8,7 @@
 import type { ShelterUpdateStatus } from './shelterUpdateStatus';
 
 export interface ShelterUpdate {
+  /** @minimum 0 */
   capacity?: number;
   currentOccupancy?: number;
   status?: ShelterUpdateStatus;

@@ -9,9 +9,18 @@ import type { RescueTeamInputType } from './rescueTeamInputType';
 
 export interface RescueTeamInput {
   equipment?: string[];
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude: number;
   name: string;
+  /** @minimum 1 */
   size: number;
   type: RescueTeamInputType;
 }

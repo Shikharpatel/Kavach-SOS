@@ -13,13 +13,22 @@ import type { IncidentStatus } from './incidentStatus';
 import type { IncidentUpdatedAt } from './incidentUpdatedAt';
 
 export interface Incident {
+  /** @minimum 0 */
   affectedPopulation: number;
   category: IncidentCategory;
   createdAt: string;
   description?: IncidentDescription;
   id: number;
   imageUrl?: IncidentImageUrl;
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude: number;
   region?: IncidentRegion;
   /**

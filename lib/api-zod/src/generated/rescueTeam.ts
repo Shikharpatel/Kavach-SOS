@@ -13,9 +13,18 @@ export interface RescueTeam {
   assignedIncidentId?: RescueTeamAssignedIncidentId;
   equipment?: string[];
   id: number;
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude: number;
   name: string;
+  /** @minimum 1 */
   size: number;
   status: RescueTeamStatus;
   type: RescueTeamType;

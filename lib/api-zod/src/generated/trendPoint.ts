@@ -9,5 +9,9 @@
 export interface TrendPoint {
   count: number;
   date: string;
+  /**
+   * @minimum 1
+   * @maximum 10
+   */
   severity: number;
 }

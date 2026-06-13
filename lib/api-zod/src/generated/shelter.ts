@@ -10,11 +10,20 @@ import type { ShelterStatus } from './shelterStatus';
 
 export interface Shelter {
   address?: ShelterAddress;
+  /** @minimum 0 */
   capacity: number;
   currentOccupancy: number;
   facilities?: string[];
   id: number;
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude: number;
   name: string;
   status: ShelterStatus;

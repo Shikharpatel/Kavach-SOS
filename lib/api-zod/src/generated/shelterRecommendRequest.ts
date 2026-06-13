@@ -8,7 +8,16 @@
 
 export interface ShelterRecommendRequest {
   incidentId: number;
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude: number;
+  /** @minimum 0 */
   requiredCapacity: number;
 }

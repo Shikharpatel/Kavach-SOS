@@ -8,7 +8,15 @@
 
 export interface Waypoint {
   label: string;
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude: number;
   order?: number;
 }

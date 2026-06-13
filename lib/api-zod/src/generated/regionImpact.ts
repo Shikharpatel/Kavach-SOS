@@ -9,7 +9,15 @@
 export interface RegionImpact {
   avgSeverity: number;
   incidentCount: number;
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude: number;
   region: string;
   totalAffected: number;

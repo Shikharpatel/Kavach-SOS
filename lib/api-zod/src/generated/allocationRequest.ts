@@ -7,7 +7,12 @@
  */
 
 export interface AllocationRequest {
+  /** @minimum 0 */
   affectedPopulation: number;
   incidentId: number;
+  /**
+   * @minimum 1
+   * @maximum 10
+   */
   severity: number;
 }

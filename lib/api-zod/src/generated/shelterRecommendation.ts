@@ -8,6 +8,7 @@
 import type { Shelter } from './shelter';
 
 export interface ShelterRecommendation {
+  /** @minimum 0 */
   availableCapacity: number;
   distanceKm: number;
   estimatedTravelMinutes: number;

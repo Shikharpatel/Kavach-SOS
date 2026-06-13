@@ -8,6 +8,7 @@
 import type { IncidentUpdateStatus } from './incidentUpdateStatus';
 
 export interface IncidentUpdate {
+  /** @minimum 0 */
   affectedPopulation?: number;
   description?: string;
   imageUrl?: string;

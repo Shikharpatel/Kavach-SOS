@@ -8,10 +8,19 @@
 
 export interface ShelterInput {
   address?: string;
+  /** @minimum 0 */
   capacity: number;
   currentOccupancy?: number;
   facilities?: string[];
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude: number;
   name: string;
 }

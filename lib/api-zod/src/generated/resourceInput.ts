@@ -10,8 +10,16 @@ import type { ResourceInputCategory } from './resourceInputCategory';
 export interface ResourceInput {
   availableQuantity: number;
   category: ResourceInputCategory;
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude?: number;
   location: string;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude?: number;
   name: string;
   totalQuantity: number;

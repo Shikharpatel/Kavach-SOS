@@ -10,7 +10,15 @@ import type { RescueTeamUpdateStatus } from './rescueTeamUpdateStatus';
 
 export interface RescueTeamUpdate {
   assignedIncidentId?: RescueTeamUpdateAssignedIncidentId;
+  /**
+   * @minimum -90
+   * @maximum 90
+   */
   latitude?: number;
+  /**
+   * @minimum -180
+   * @maximum 180
+   */
   longitude?: number;
   status?: RescueTeamUpdateStatus;
 }

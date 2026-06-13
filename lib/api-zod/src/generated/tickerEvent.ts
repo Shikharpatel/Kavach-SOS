@@ -11,6 +11,10 @@ export interface TickerEvent {
   id: number;
   message: string;
   region: string;
+  /**
+   * @minimum 1
+   * @maximum 10
+   */
   severity: number;
   timestamp: string;
 }

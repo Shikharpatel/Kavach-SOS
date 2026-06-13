@@ -7,9 +7,14 @@
  */
 
 export interface ActionPlanRequest {
+  /** @minimum 0 */
   affectedPopulation: number;
   category: string;
   incidentId: number;
+  /**
+   * @minimum 1
+   * @maximum 10
+   */
   severity: number;
   weatherCondition?: string;
 }
