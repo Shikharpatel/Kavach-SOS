@@ -1,19 +1,22 @@
+import numpy as np
+import pandas as pd
 import heapq
-from typing import Dict, Tuple, List
+from typing import List, Tuple
 
-def calculate_safest_route(graph: Dict[str, Dict[str, float]], start: str, target: str) -> Tuple[List[str], float]:
+def calculate_safest_route(adj_matrix: pd.DataFrame, start: str, target: str) -> Tuple[List[str], float]:
     """
-    Calculates the safest and shortest route from a rescue team to an incident zone.
+    Calculates the safest and shortest route using a Pandas DataFrame adjacency matrix.
+    Missing edges are represented as np.inf.
     
-    :param graph: Adjacency list representing the road network with edge weights
+    :param adj_matrix: Pandas DataFrame representing the graph weights
     :param start: Starting node (Rescue Team location)
     :param target: Target node (Incident location)
-    :return: Tuple containing the optimal path and the total cost.
     """
-    distances = {node: float('infinity') for node in graph}
+    nodes = adj_matrix.columns.tolist()
+    distances = {node: np.inf for node in nodes}
     distances[start] = 0
     priority_queue = [(0, start)]
-    previous_nodes = {node: None for node in graph}
+    previous_nodes = {node: None for node in nodes}
 
     while priority_queue:
         current_distance, current_node = heapq.heappop(priority_queue)
@@ -24,13 +27,15 @@ def calculate_safest_route(graph: Dict[str, Dict[str, float]], start: str, targe
         if current_distance > distances[current_node]:
             continue
 
-        for neighbor, weight in graph[current_node].items():
-            distance = current_distance + weight
-
-            if distance < distances[neighbor]:
-                distances[neighbor] = distance
-                previous_nodes[neighbor] = current_node
-                heapq.heappush(priority_queue, (distance, neighbor))
+        for neighbor in nodes:
+            weight = adj_matrix.at[current_node, neighbor]
+            # If an edge exists and is not infinite
+            if not np.isinf(weight) and weight > 0:
+                distance = current_distance + weight
+                if distance < distances[neighbor]:
+                    distances[neighbor] = distance
+                    previous_nodes[neighbor] = current_node
+                    heapq.heappush(priority_queue, (distance, neighbor))
 
     # Reconstruct path
     path = []
@@ -41,7 +46,7 @@ def calculate_safest_route(graph: Dict[str, Dict[str, float]], start: str, targe
     
     path.reverse()
     
-    if distances[target] == float('infinity'):
-        return [], float('infinity')
+    if np.isinf(distances[target]):
+        return [], float('inf')
         
-    return path, distances[target]
+    return path, float(distances[target])
