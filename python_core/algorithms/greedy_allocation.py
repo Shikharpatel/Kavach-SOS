@@ -1,32 +1,34 @@
-import pandas as pd
+from typing import List, Dict
 
-def allocate_resources(incidents_df: pd.DataFrame, available_resources: int) -> pd.DataFrame:
+def allocate_resources(incidents: List[Dict], available_resources: int) -> Dict[str, int]:
     """
-    Greedy algorithm to optimally distribute limited resources using Pandas.
+    Greedy algorithm to optimally distribute limited resources (e.g. medical kits) 
+    to incidents based on their severity and affected population.
     
-    :param incidents_df: DataFrame containing 'id', 'severity', and 'population'
-    :param available_resources: Total units of resources available
-    :return: DataFrame with the allocation results
+    :param incidents: List of incident dictionaries with 'id', 'severity', and 'population'
+    :param available_resources: Total units of resources available to dispatch
+    :return: Dictionary mapping incident IDs to the number of resources allocated
     """
-    # Create priority score: severity * population (vectorized operation)
-    incidents_df['priority_score'] = incidents_df['severity'] * incidents_df['population']
-    
-    # Sort by priority using pandas
-    sorted_df = incidents_df.sort_values(by='priority_score', ascending=False).copy()
-    
-    # Calculate required resources (vectorized operation)
-    sorted_df['required_resources'] = (sorted_df['population'] // 10) + 1
-    
-    # Allocate resources greedily
-    allocated = []
-    remaining = available_resources
-    
-    for req in sorted_df['required_resources']:
-        alloc = min(req, remaining)
-        allocated.append(alloc)
-        remaining -= alloc
+    # Sort incidents based on a combined priority metric (Severity * Population)
+    # Higher priority gets resources first
+    sorted_incidents = sorted(
+        incidents, 
+        key=lambda x: (x['severity'] * x['population']), 
+        reverse=True
+    )
+
+    allocation = {incident['id']: 0 for incident in incidents}
+    remaining_resources = available_resources
+
+    for incident in sorted_incidents:
+        if remaining_resources <= 0:
+            break
+            
+        # Assume 1 resource unit covers 10 affected people
+        required_resources = (incident['population'] // 10) + 1
         
-    # Append the results to the dataframe
-    sorted_df['allocated_resources'] = allocated
-    
-    return sorted_df[['id', 'severity', 'population', 'required_resources', 'allocated_resources']]
+        allocated = min(required_resources, remaining_resources)
+        allocation[incident['id']] = allocated
+        remaining_resources -= allocated
+
+    return allocation
